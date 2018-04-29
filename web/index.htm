@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+    <title>SUI Demo</title>
+</head>
+<body>
+	<div id="content"/>
+	<script>
+		window.onload = function () {
+            var ws = new WebSocket('ws://localhost:4000');
+
+            ws.onmessage = function (event) {
+                var updates = JSON.parse(event.data);
+
+                for (var i = 0; i < updates.length; i++) {
+                    var update = updates[i];
+
+                    switch (update['type']) {
+                        case 'html':
+                            document.getElementById(
+                                update['element']).innerHTML =
+                                update['html']
+                            break;
+
+                        case 'listen':
+                            document.getElementById(update['element']).addEventListener(
+                                update['event_type'],
+                                function(event) {
+                                    ws.send(JSON.stringify(event));
+                                }
+                            )
+
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            window.addEventListener(
+                'keydown',
+                function(event) {
+                    ws.send(JSON.stringify(['click', event.target.id, event.key]));
+                }
+            )
+        }
+	</script>
+</body>
+</html>
