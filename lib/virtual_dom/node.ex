@@ -7,26 +7,42 @@ defmodule VirtualDOM.VNode do
   import XXHash, only: [xxh32: 1]
 
 
+  # From https://npm.runkit.com/svg-tag-names
+  # x = [...new Set(svgTagNames.concat(htmlTagNames))].sort().join(", :")
+  # - -> _
+  # Could add compile-time attribute checking later
   @tags [
-      :a, :abbr, :acronym, :address, :applet, :area, :article, :aside, :audio,
-      :b, :base, :basefont, :bdo, :big, :blockquote, :body, :br, :button,
-      :canvas, :caption, :center, :cite, :code, :col, :colgroup,
-      :datalist, :dd, :del, :dfn, :div, :dl, :dt,
-      :em, :embed, :fieldset, :figcaption, :figure, :font, :footer, :form, :frame, :frameset,
-      :head, :header, :h1, :h2, :h3, :h4, :h5, :h6, :hr, :html,
-      :i, :iframe, :img, :input, :ins, :kbd,
-      :label, :legend, :li, :link,
-      :main, :map, :mark, :meta, :meter,
-      :nav, :noscript,
-      :object, :ol, :optgroup, :option,
-      :p, :param, :pre, :progress,
-      :q,
-      :s, :samp, :script, :section, :select, :small, :source, :span, :strike, :strong, :style, :sub, :sup,
-      :table, :tbody, :text, :td, :textarea, :tfoot, :th, :thead, :time, :title, :tr,
-      :u, :ul,
-      :var, :video,
-      :wbr]
-
+    :a, :abbr, :acronym, :address, :altGlyph, :altGlyphDef, :altGlyphItem,
+    :animate, :animateColor, :animateMotion, :animateTransform, :animation,
+    :applet, :area, :article, :aside, :audio, :b, :base, :basefont, :bdi,
+    :bdo, :bgsound, :big, :blink, :blockquote, :body, :br, :button, :canvas,
+    :caption, :center, :circle, :cite, :clipPath, :code, :col, :colgroup,
+    :color_profile, :command, :content, :cursor, :data, :datalist, :dd,
+    :defs, :del, :desc, :details, :dfn, :dialog, :dir, :discard, :div, :dl,
+    :dt, :element, :ellipse, :em, :embed, :feBlend, :feColorMatrix,
+    :feComponentTransfer, :feComposite, :feConvolveMatrix, :feDiffuseLighting,
+    :feDisplacementMap, :feDistantLight, :feDropShadow, :feFlood, :feFuncA,
+    :feFuncB, :feFuncG, :feFuncR, :feGaussianBlur, :feImage, :feMerge,
+    :feMergeNode, :feMorphology, :feOffset, :fePointLight, :feSpecularLighting,
+    :feSpotLight, :feTile, :feTurbulence, :fieldset, :figcaption, :figure,
+    :filter, :font, :font_face, :font_face_format, :font_face_name,
+    :font_face_src, :font_face_uri, :footer, :foreignObject, :form, :frame,
+    :frameset, :g, :glyph, :glyphRef, :h1, :h2, :h3, :h4, :h5, :h6, :handler,
+    :hatch, :hatchpath, :head, :header, :hgroup, :hkern, :hr, :html, :i,
+    :iframe, :image, :img, :input, :ins, :isindex, :kbd, :keygen, :label,
+    :legend, :li, :line, :linearGradient, :link, :listener, :listing, :main,
+    :map, :mark, :marker, :marquee, :mask, :math, :menu, :menuitem, :mesh,
+    :meshgradient, :meshpatch, :meshrow, :meta, :metadata, :meter, :missing_glyph,
+    :mpath, :multicol, :nav, :nextid, :nobr, :noembed, :noframes, :noscript,
+    :object, :ol, :optgroup, :option, :output, :p, :param, :path, :pattern,
+    :picture, :plaintext, :polygon, :polyline, :pre, :prefetch, :progress,
+    :q, :radialGradient, :rb, :rbc, :rect, :rp, :rt, :rtc, :ruby, :s, :samp,
+    :script, :section, :select, :set, :shadow, :slot, :small, :solidColor,
+    :solidcolor, :source, :spacer, :span, :stop, :strike, :strong, :style,
+    :sub, :summary, :sup, :svg, :switch, :symbol, :table, :tbody, :tbreak,
+    :td, :template, :text, :textArea, :textPath, :textarea, :tfoot, :th,
+    :thead, :time, :title, :tr, :track, :tref, :tspan, :tt, :u, :ul, :unknown,
+    :use, :var, :video, :view, :vkern, :wbr, :xmp]
 
   defmacro view(do: block) do
     quote do
@@ -171,7 +187,6 @@ defmodule VirtualDOM.VNode do
     end
 
   end
-
 
 
   def vnode?({:vnode, tag, id, attributes, children, node_hash, tree_hash}) when is_bitstring(tag)
