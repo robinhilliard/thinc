@@ -7,108 +7,110 @@ defmodule VirtualDOMNodeTest do
 
 
   test "bare vnode" do
-    v = vnode "br"
-    assert v == {:vnode, "br", :noid, [], []}
+    assert {:vnode, "br", :noid, [], [], _, _} =
+      vnode "br"
   end
 
 
   test "bare tag" do
-    v = view do
-      br
-    end
-
-    assert v == {:vnode, "br", :noid, [], []}
+    assert {:vnode, "br", :noid, [], [], _, _} =
+    (
+       view do
+         br
+       end
+    )
   end
 
 
   test "tag with id" do
-    v = view do
-      a "anchor"
-    end
-
-    assert v == {:vnode, "a", "anchor", [], []}
+    assert {:vnode, "a", "anchor", [], [], _, _} =
+    (
+      view do
+        a "anchor"
+      end
+    )
   end
 
 
   test "vnode with attributes" do
-    v = vnode "a", [href: "there"]
-    assert v == {:vnode, "a", :noid, [href: "there"], []}
+    assert {:vnode, "a", :noid, [href: "there"], [], _, _} =
+             vnode "a", [href: "there"]
   end
 
 
   test "tag with attributes" do
-    v = view do
-      a href: "there"
-    end
+    assert {:vnode, "a", :noid, [href: "there"], [], _, _} =
+    (
+      view do
+        a href: "there"
+      end
+    )
 
-    assert v == {:vnode, "a", :noid, [href: "there"], []}
   end
 
 
   test "vnode with one child" do
-    v = vnode "a", [vnode("text", "Jimmy")]
-    assert v == {
+    assert {
             :vnode,
              "a",
              :noid,
              [],
              [
-               {:vnode, "text", "Jimmy", [], []}
-             ]
-           }
+               {:vnode, "text", "Jimmy", [], [], _, _}
+             ],
+             _, _
+           } = vnode "a", [vnode("text", "Jimmy")]
   end
 
 
   test "tag with one child" do
-    v = view do
-      a do
-        text "Jimmy"
-      end
-    end
-
-    assert v == {
+    assert {
             :vnode,
              "a",
              :noid,
              [],
              [
-               {:vnode, "text", "Jimmy", [], []}
-             ]
-           }
+               {:vnode, "text", "Jimmy", [], [], _, _}
+             ],
+             _, _
+           } =
+    (
+      view do
+        a do
+          text "Jimmy"
+        end
+      end
+    )
 
   end
 
 
   test "tag with two children" do
-    v = view do
-      a do
-        text "Jimmy"
-        text "Alice"
-      end
-    end
-
-    assert v == {
+    assert {
             :vnode,
              "a",
              :noid,
              [],
              [
-               {:vnode, "text", "Jimmy", [], []},
-               {:vnode, "text", "Alice", [], []}
-             ]
-           }
+               {:vnode, "text", "Jimmy", [], [], _, _},
+               {:vnode, "text", "Alice", [], [], _, _}
+             ],
+             _, _
+           } =
+    (
+      view do
+        a do
+          text "Jimmy"
+          text "Alice"
+        end
+      end
+    )
 
   end
 
 
   test "tag with attribute and child" do
-    v = view do
-      div style: "x" do
-        p do: text "y"
-      end
-    end
-
-    assert v == {
+    assert {
             :vnode,
             "div",
             :noid,
@@ -124,11 +126,23 @@ defmodule VirtualDOMNodeTest do
                     :vnode,
                     "text",
                     "y",
-                    [], []
+                    [], [],
+                    _, _
                   }
-                ]
+                ],
+                _, _
               }
-            ]}
+            ],
+            _, _
+           } =
+    (
+      view do
+        div style: "x" do
+          p do: text "y"
+        end
+      end
+    )
+
   end
 
 

@@ -4,6 +4,7 @@ defmodule VirtualDOM.VNode do
 
   import Keyword, only: [keyword?: 1]
   import Macro, only: [postwalk: 2]
+  import XXHash, only: [xxh32: 1]
 
 
   @tags [
@@ -28,8 +29,6 @@ defmodule VirtualDOM.VNode do
 
 
   defmacro view(do: block) do
-    #Macro.postwalk(block, fn seg -> IO.inspect(seg) end)
-
     quote do
       import Kernel, except: [div: 2]
       unquote(postwalk(block, &postwalk/1))
@@ -37,7 +36,6 @@ defmodule VirtualDOM.VNode do
 
   end
 
-  # TODO  keep line numbers for error messages
 
   defp postwalk({tag, _, nil}) when tag in @tags do
     quote do
@@ -122,10 +120,10 @@ defmodule VirtualDOM.VNode do
 
     cond do
       keyword?(attributes_or_children) ->
-        {:vnode, tag, :noid, attributes_or_children, []}
+        vnode(tag, :noid, attributes_or_children, [])
 
       vnode_list?(attributes_or_children) ->
-        {:vnode, tag, :noid, [], attributes_or_children}
+        vnode(tag, :noid, [], attributes_or_children)
 
       true ->
         raise """
@@ -158,7 +156,17 @@ defmodule VirtualDOM.VNode do
         raise "Children of vnode #{tag} must all be vnodes"
 
       true ->
-        {:vnode, tag, id, attributes, children}
+        node_hash = inspect({tag,id,attributes})
+        tree_hash = inspect([node_hash] ++ for {:vnode, _, _, _, _, hash} <- children, do: hash)
+        {
+          :vnode,
+          tag,
+          id,
+          attributes,
+          children,
+          xxh32(node_hash),
+          xxh32(tree_hash)
+        }
 
     end
 
@@ -166,10 +174,12 @@ defmodule VirtualDOM.VNode do
 
 
 
-  def vnode?({:vnode, tag, id, attributes, children}) when is_bitstring(tag)
+  def vnode?({:vnode, tag, id, attributes, children, node_hash, tree_hash}) when is_bitstring(tag)
         and (is_bitstring(id) or id == :noid)
         and is_list(attributes)
-        and is_list(children) do
+        and is_list(children)
+        and is_integer(node_hash)
+        and is_integer(tree_hash) do
 
         keyword?(attributes) and vnode_list?(children)
 
