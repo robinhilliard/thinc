@@ -137,6 +137,14 @@ defmodule VirtualDOM.VNode do
 
   end
 
+  def vnode(tag, attributes, children) when is_bitstring(tag)
+        and is_list(attributes)
+        and is_list(children) do
+
+    vnode(tag, :noid, attributes, children)
+
+  end
+
   def vnode(tag, id, attributes, children) when is_bitstring(tag)
         and (is_bitstring(id) or id == :noid)
         and is_list(attributes)

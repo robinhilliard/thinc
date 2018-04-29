@@ -142,7 +142,20 @@ defmodule VirtualDOMNodeTest do
 
 
   test "vnode with valid attrs and invalid children" do
+    assert_raise RuntimeError,
+                 ~r/Children of vnode p must all be vnodes/,
+                 fn ->
+                  vnode "p", [class: "x"], [1,2,3]
+                 end
+  end
 
+
+  test "vnode with invalid attrs and valid children" do
+    assert_raise RuntimeError,
+                 ~r/Attributes of vnode p must be a keyword list/,
+                 fn ->
+                  vnode "p", [1, 2, 3], [vnode("text", "hello")]
+                 end
   end
 
 
