@@ -1,12 +1,12 @@
 defmodule VirtualDOMDiffTest do
   use ExUnit.Case
+  import VirtualDOM.VNode
   import VirtualDOM.Diff
 
 
-  test "plain list" do
-    a = [1,2,3]
-    b = [1,2,4]
+  test "single html node identity" do
+    a = vnode "html"
 
-    assert diff(a, b) == false
+    assert diff(a, a) == []
   end
 end

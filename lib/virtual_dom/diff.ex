@@ -1,20 +1,15 @@
 defmodule VirtualDOM.Diff do
   @moduledoc false
 
-  require Enum
 
-
-  def diff([], []) do
+  def diff({:vnode, _, _, _, _, nh, th}, {:vnode, _, _, _, _, nh, th}) do
     []
   end
 
-  def diff(a, b) do
-    a == b
+  def diff({:vnode, _, _, _, _, na, th}, {:vnode, _, _, _, _, nb, th}) do
+    []
   end
 
 
-  def is_flat(list) do
-    Enum.all?(list, fn(x) -> !is_list(x) end)
-  end
 
 end
