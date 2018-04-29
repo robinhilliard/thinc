@@ -173,7 +173,7 @@ defmodule VirtualDOM.VNode do
 
       true ->
         node_hash = inspect({tag,id,attributes})
-        tree_hash = inspect([node_hash] ++ for {:vnode, _, _, _, _, hash} <- children, do: hash)
+        tree_hash = inspect(for {:vnode, _, _, _, _, hash} <- children, do: hash)
         {
           :vnode,
           tag,
