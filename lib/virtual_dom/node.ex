@@ -5,6 +5,7 @@ defmodule VirtualDOM.VNode do
   import Keyword, only: [keyword?: 1]
   import Macro, only: [postwalk: 2]
   import XXHash, only: [xxh32: 1]
+  import Enum, only: [into: 2]
 
 
   # From https://npm.runkit.com/svg-tag-names
@@ -173,15 +174,15 @@ defmodule VirtualDOM.VNode do
 
       true ->
         node_hash = inspect({tag,id,attributes})
-        tree_hash = inspect(for {:vnode, _, _, _, _, hash} <- children, do: hash)
+        children_hash = inspect(for {:vnode, _, _, _, _, hash} <- children, do: hash)
         {
           :vnode,
           tag,
           id,
-          attributes,
+          into(attributes, %{}),
           children,
           xxh32(node_hash),
-          xxh32(tree_hash)
+          xxh32(children_hash)
         }
 
     end
@@ -191,12 +192,12 @@ defmodule VirtualDOM.VNode do
 
   def vnode?({:vnode, tag, id, attributes, children, node_hash, tree_hash}) when is_bitstring(tag)
         and (is_bitstring(id) or id == :noid)
-        and is_list(attributes)
+        and is_map(attributes)
         and is_list(children)
         and is_integer(node_hash)
         and is_integer(tree_hash) do
 
-        keyword?(attributes) and vnode_list?(children)
+        is_map(attributes) and vnode_list?(children)
 
   end
 

@@ -7,13 +7,13 @@ defmodule VirtualDOMNodeTest do
 
 
   test "bare vnode" do
-    assert {:vnode, "br", :noid, [], [], _, _} =
+    assert {:vnode, "br", :noid, %{}, [], _, _} =
       vnode "br"
   end
 
 
   test "bare tag" do
-    assert {:vnode, "br", :noid, [], [], _, _} =
+    assert {:vnode, "br", :noid, %{}, [], _, _} =
     (
        view do
          br
@@ -23,7 +23,7 @@ defmodule VirtualDOMNodeTest do
 
 
   test "tag with id" do
-    assert {:vnode, "a", "anchor", [], [], _, _} =
+    assert {:vnode, "a", "anchor", %{}, [], _, _} =
     (
       view do
         a "anchor"
@@ -33,13 +33,13 @@ defmodule VirtualDOMNodeTest do
 
 
   test "vnode with attributes" do
-    assert {:vnode, "a", :noid, [href: "there"], [], _, _} =
+    assert {:vnode, "a", :noid, %{:href => "there"}, [], _, _} =
              vnode "a", [href: "there"]
   end
 
 
   test "tag with attributes" do
-    assert {:vnode, "a", :noid, [href: "there"], [], _, _} =
+    assert {:vnode, "a", :noid, %{:href => "there"}, [], _, _} =
     (
       view do
         a href: "there"
@@ -54,9 +54,9 @@ defmodule VirtualDOMNodeTest do
             :vnode,
              "a",
              :noid,
-             [],
+             %{},
              [
-               {:vnode, "text", "Jimmy", [], [], _, _}
+               {:vnode, "text", "Jimmy", %{}, [], _, _}
              ],
              _, _
            } = vnode "a", [vnode("text", "Jimmy")]
@@ -68,9 +68,9 @@ defmodule VirtualDOMNodeTest do
             :vnode,
              "a",
              :noid,
-             [],
+             %{},
              [
-               {:vnode, "text", "Jimmy", [], [], _, _}
+               {:vnode, "text", "Jimmy", %{}, [], _, _}
              ],
              _, _
            } =
@@ -90,10 +90,10 @@ defmodule VirtualDOMNodeTest do
             :vnode,
              "a",
              :noid,
-             [],
+             %{},
              [
-               {:vnode, "text", "Jimmy", [], [], _, _},
-               {:vnode, "text", "Alice", [], [], _, _}
+               {:vnode, "text", "Jimmy", %{}, [], _, _},
+               {:vnode, "text", "Alice", %{}, [], _, _}
              ],
              _, _
            } =
@@ -114,19 +114,19 @@ defmodule VirtualDOMNodeTest do
             :vnode,
             "div",
             :noid,
-            [style: "x"],
+            %{:style => "x"},
             [
               {
                 :vnode,
                 "p",
                 :noid,
-                [],
+                %{},
                 [
                   {
                     :vnode,
                     "text",
                     "y",
-                    [], [],
+                    %{}, [],
                     _, _
                   }
                 ],
