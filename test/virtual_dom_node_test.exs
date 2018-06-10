@@ -7,13 +7,13 @@ defmodule VirtualDOMNodeTest do
 
 
   test "bare vnode" do
-    assert {:vnode, "br", :noid, %{}, [], _, _} =
+    assert {:vnode, "br", :__no_id__, %{}, [], _, _} =
       vnode "br"
   end
 
 
   test "bare tag" do
-    assert {:vnode, "br", :noid, %{}, [], _, _} =
+    assert {:vnode, "br", :__no_id__, %{}, [], _, _} =
     (
        view do
          br
@@ -33,13 +33,13 @@ defmodule VirtualDOMNodeTest do
 
 
   test "vnode with attributes" do
-    assert {:vnode, "a", :noid, %{:href => "there"}, [], _, _} =
+    assert {:vnode, "a", :__no_id__, %{:href => "there"}, [], _, _} =
              vnode "a", [href: "there"]
   end
 
 
   test "tag with attributes" do
-    assert {:vnode, "a", :noid, %{:href => "there"}, [], _, _} =
+    assert {:vnode, "a", :__no_id__, %{:href => "there"}, [], _, _} =
     (
       view do
         a href: "there"
@@ -53,7 +53,7 @@ defmodule VirtualDOMNodeTest do
     assert {
             :vnode,
              "a",
-             :noid,
+             :__no_id__,
              %{},
              [
                {:vnode, "text", "Jimmy", %{}, [], _, _}
@@ -67,7 +67,7 @@ defmodule VirtualDOMNodeTest do
     assert {
             :vnode,
              "a",
-             :noid,
+             :__no_id__,
              %{},
              [
                {:vnode, "text", "Jimmy", %{}, [], _, _}
@@ -89,7 +89,7 @@ defmodule VirtualDOMNodeTest do
     assert {
             :vnode,
              "a",
-             :noid,
+             :__no_id__,
              %{},
              [
                {:vnode, "text", "Jimmy", %{}, [], _, _},
@@ -113,13 +113,13 @@ defmodule VirtualDOMNodeTest do
     assert {
             :vnode,
             "div",
-            :noid,
+            :__no_id__,
             %{:style => "x"},
             [
               {
                 :vnode,
                 "p",
-                :noid,
+                :__no_id__,
                 %{},
                 [
                   {
@@ -137,7 +137,7 @@ defmodule VirtualDOMNodeTest do
            } =
     (
       view do
-        div style: "x" do
+    div style: "x" do
           p do: text "y"
         end
       end
