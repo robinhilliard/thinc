@@ -5,7 +5,7 @@ defmodule VirtualDOM.VNode do
   import Keyword, only: [keyword?: 1]
   import Macro, only: [postwalk: 2]
   import XXHash, only: [xxh32: 1]
-  import Enum, only: [into: 2]
+  import Enum, only: [into: 2, map: 2]
 
 
   # From https://npm.runkit.com/svg-tag-names
@@ -56,7 +56,7 @@ defmodule VirtualDOM.VNode do
 
   defp postwalk({tag, _, nil}) when tag in @tags do
     quote do
-      vnode(to_string(unquote(tag)), :noid)
+      vnode(to_string(unquote(tag)), :__no_id__)
     end
   end
 
@@ -70,13 +70,13 @@ defmodule VirtualDOM.VNode do
   defp postwalk({tag, _, [[do: {:__block__, _, children}]]}) when tag in @tags
       and is_list(children) do
     quote do
-      vnode(to_string(unquote(tag)), :noid, [], unquote(children))
+      vnode(to_string(unquote(tag)), :__no_id__, [], unquote(children))
     end
   end
 
   defp postwalk({tag, _, [[do: child]]}) when tag in @tags do
     quote do
-      vnode(to_string(unquote(tag)), :noid, [], [unquote(child)])
+      vnode(to_string(unquote(tag)), :__no_id__, [], [unquote(child)])
     end
   end
 
@@ -85,7 +85,7 @@ defmodule VirtualDOM.VNode do
     and is_list(attrs) do
 
     quote do
-      vnode(to_string(unquote(tag)), :noid, unquote(attrs), [])
+      vnode(to_string(unquote(tag)), :__no_id__, unquote(attrs), [])
     end
   end
 
@@ -94,7 +94,7 @@ defmodule VirtualDOM.VNode do
     and is_list(children) do
 
     quote do
-      vnode(to_string(unquote(tag)), :noid, unquote(attrs), unquote(children))
+      vnode(to_string(unquote(tag)), :__no_id__, unquote(attrs), unquote(children))
     end
   end
 
@@ -102,7 +102,7 @@ defmodule VirtualDOM.VNode do
     and is_list(attrs) do
 
     quote do
-      vnode(to_string(unquote(tag)), :noid, unquote(attrs), [unquote(child)])
+      vnode(to_string(unquote(tag)), :__no_id__, unquote(attrs), [unquote(child)])
     end
   end
 
@@ -113,12 +113,12 @@ defmodule VirtualDOM.VNode do
 
   def vnode(tag) when is_bitstring(tag) do
 
-    vnode(tag, :noid, [], [])
+    vnode(tag, :__no_id__, [], [])
 
   end
 
   def vnode(tag, id) when is_bitstring(tag)
-      and (is_bitstring(id) or id == :noid) do
+      and (is_bitstring(id) or id == :__no_id__) do
 
     vnode(tag, id, [], [])
 
@@ -127,20 +127,20 @@ defmodule VirtualDOM.VNode do
   def vnode(tag, attributes_or_children) when is_bitstring(tag)
       and is_list(attributes_or_children) do
 
-    vnode(tag, :noid, attributes_or_children)
+    vnode(tag, :__no_id__, attributes_or_children)
 
   end
 
   def vnode(tag, id, attributes_or_children) when is_bitstring(tag)
-      and (is_bitstring(id) or id == :noid)
+      and (is_bitstring(id) or id == :__no_id__)
       and is_list(attributes_or_children) do
 
     cond do
       keyword?(attributes_or_children) ->
-        vnode(tag, :noid, attributes_or_children, [])
+        vnode(tag, :__no_id__, attributes_or_children, [])
 
       vnode_list?(attributes_or_children) ->
-        vnode(tag, :noid, [], attributes_or_children)
+        vnode(tag, :__no_id__, [], attributes_or_children)
 
       true ->
         raise """
@@ -156,12 +156,12 @@ defmodule VirtualDOM.VNode do
         and is_list(attributes)
         and is_list(children) do
 
-    vnode(tag, :noid, attributes, children)
+    vnode(tag, :__no_id__, attributes, children)
 
   end
 
   def vnode(tag, id, attributes, children) when is_bitstring(tag)
-        and (is_bitstring(id) or id == :noid)
+        and (is_bitstring(id) or id == :__no_id__)
         and is_list(attributes)
         and is_list(children) do
 
@@ -174,7 +174,7 @@ defmodule VirtualDOM.VNode do
 
       true ->
         node_hash = inspect({tag,id,attributes})
-        children_hash = inspect(for {:vnode, _, _, _, _, hash} <- children, do: hash)
+        children_hash = inspect(children |> map(&tree_hash/1))
         {
           :vnode,
           tag,
@@ -191,7 +191,7 @@ defmodule VirtualDOM.VNode do
 
 
   def vnode?({:vnode, tag, id, attributes, children, node_hash, tree_hash}) when is_bitstring(tag)
-        and (is_bitstring(id) or id == :noid)
+        and (is_bitstring(id) or id == :__no_id__)
         and is_map(attributes)
         and is_list(children)
         and is_integer(node_hash)
@@ -212,6 +212,21 @@ defmodule VirtualDOM.VNode do
 
   def vnode_list?([head | tail]) do
     vnode?(head) and vnode_list?(tail)
+  end
+
+
+  def tree_hash({:vnode, _, _, _, _, node_hash, children_hash}) do
+    node_hash * 10000000000 + children_hash
+  end
+
+
+  def tag_id_tree_hash({:vnode, tag, :__no_id__, _, _, node_hash, children_hash}) do
+    tree_hash = node_hash * 10000000000 + children_hash
+    {{tag, tree_hash}, tree_hash}
+  end
+
+  def tag_id_tree_hash({:vnode, tag, id, _, _, node_hash, children_hash}) do
+    {{tag, id}, node_hash * 10000000000 + children_hash}
   end
 
 end
