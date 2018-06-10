@@ -1,5 +1,11 @@
-%{"cowboy": {:hex, :cowboy, "1.0.4", "a324a8df9f2316c833a470d918aaf73ae894278b8aa6226ce7a9bf699388f878", [:make, :rebar], [{:cowlib, "~> 1.0.0", [hex: :cowlib, repo: "hexpm", optional: false]}, {:ranch, "~> 1.0", [hex: :ranch, repo: "hexpm", optional: false]}], "hexpm"},
+%{
+  "cowboy": {:hex, :cowboy, "1.0.4", "a324a8df9f2316c833a470d918aaf73ae894278b8aa6226ce7a9bf699388f878", [:make, :rebar], [{:cowlib, "~> 1.0.0", [hex: :cowlib, repo: "hexpm", optional: false]}, {:ranch, "~> 1.0", [hex: :ranch, repo: "hexpm", optional: false]}], "hexpm"},
   "cowlib": {:hex, :cowlib, "1.0.2", "9d769a1d062c9c3ac753096f868ca121e2730b9a377de23dec0f7e08b1df84ee", [:make], [], "hexpm"},
+  "json_diff_ex": {:hex, :json_diff_ex, "0.5.3", "17b670d6c3c96fe231a8535e6db4e562425b836607527b2c7231f20c1851f1ba", [:mix], [], "hexpm"},
+  "map_diff": {:hex, :map_diff, "1.3.1", "cf9666c15587ca144051bb50389ee2f03866fe42a7bf994bfe03058465d8e7c5", [:mix], [{:tensor, "~> 1.0", [hex: :tensor, repo: "hexpm", optional: false]}], "hexpm"},
+  "numbers": {:hex, :numbers, "1.0.0", "f1e224920ac347953faff00ecac1ee3f4b9e5103018eb3fc5d1999d53ae6418c", [:mix], [], "hexpm"},
   "ranch": {:hex, :ranch, "1.4.0", "10272f95da79340fa7e8774ba7930b901713d272905d0012b06ca6d994f8826b", [:rebar3], [], "hexpm"},
+  "tensor": {:hex, :tensor, "1.2.0", "ac966af5318c3a780e3a0b15f7df51a52e5ef89ebde9d51b9b83de18ae55e9de", [:mix], [{:numbers, "~> 1.0", [hex: :numbers, repo: "hexpm", optional: false]}], "hexpm"},
   "webassembly": {:hex, :webassembly, "0.6.1", "e94f593187cb31fa847fb8a4e787be44f4ffd782ffa754173dea913889be9f9f", [:mix], [], "hexpm"},
-  "xxhash": {:hex, :xxhash, "0.2.0", "4f5ca6159df3732eae22fd942494375d17fe09a66d7711c2e106fc64dfce2356", [:mix], [], "hexpm"}}
+  "xxhash": {:hex, :xxhash, "0.2.0", "4f5ca6159df3732eae22fd942494375d17fe09a66d7711c2e106fc64dfce2356", [:mix], [], "hexpm"},
+}
