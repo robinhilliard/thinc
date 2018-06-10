@@ -28,7 +28,7 @@ defmodule VirtualDOMDiffTest do
       text "ben"
     end
 
-    assert diff(a, b) == [{:set_text, [], "ben"}]
+    assert diff(a, b) == [{:set_text, [], :__text__, "ben"}]
   end
 
 
@@ -76,7 +76,7 @@ defmodule VirtualDOMDiffTest do
       div
     end
 
-    assert diff(a, b) == [{:del_attr, [], :class}]
+    assert diff(a, b) == [{:del_attr, [], :class, :__no_val__}]
   end
 
 
@@ -93,4 +93,124 @@ defmodule VirtualDOMDiffTest do
       [{:set_attr, [], :class, "b_class"}, {:set_attr, [], :src, "b_src"}]
   end
 
+
+  test "1st level child text add" do
+    a = view do
+      div do
+        img src: "c172"
+      end
+    end
+
+     b = view do
+      div do
+        img src: "c172"
+        text "A Cessna 172"
+      end
+    end
+
+    assert diff(a, b) == [{:set_text, [1], :__text__, "A Cessna 172"}]
+  end
+
+
+  test "1st level child text change" do
+    a = view do
+      div do
+        img src: "c172"
+        text "A Cessna 17"
+      end
+    end
+
+     b = view do
+      div do
+        img src: "c172"
+        text "A Cessna 172"
+      end
+    end
+
+    assert diff(a, b) == [{:set_text, [1], :__text__, "A Cessna 172"}]
+  end
+
+
+  test "1st level child swap" do
+    a = view do
+      div do
+        img src: "c172"
+        text "A Cessna 172"
+      end
+    end
+
+     b = view do
+      div do
+        text "A Cessna 172"
+        img src: "c172"
+      end
+    end
+
+    assert diff(a, b) == [{:move, [1], 0, "A Cessna 172"}]
+  end
+
+
+  test "1st level child swap with duplicate" do
+    a = view do
+      div do
+        img src: "c172"
+        text "A Cessna 172"
+        img src: "c172"
+        text "A Cessna 172"
+      end
+    end
+
+     b = view do
+      div do
+        text "A Cessna 172"
+        img src: "c172"
+        img src: "c172"
+        text "A Cessna 172"
+      end
+    end
+
+    assert diff(a, b) == [{:move, [1], 0, "A Cessna 172"}]
+  end
+
+
+  test "1st level child swap with one delete" do
+    a = view do
+      div do
+        img src: "c172"
+        text "A Cessna 172"
+        img src: "c172"
+        text "A Cessna 172"
+      end
+    end
+
+     b = view do
+      div do
+        text "A Cessna 172"
+        img src: "c172"
+        img src: "c172"
+      end
+    end
+
+    assert diff(a, b) == [{:move, [1], 0, "A Cessna 172"}]
+  end
+
+  test "1st level child swap with two deletes" do
+    a = view do
+      div do
+        img src: "c172"
+        text "A Cessna 172"
+        img src: "c172"
+        text "A Cessna 172"
+      end
+    end
+
+     b = view do
+      div do
+        text "A Cessna 172"
+        img src: "c172"
+      end
+    end
+
+    assert diff(a, b) == [{:move, [1], 0, "A Cessna 172"}]
+  end
 end
